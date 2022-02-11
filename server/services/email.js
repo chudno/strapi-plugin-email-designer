@@ -44,19 +44,13 @@ module.exports = ({ strapi }) => {
       }
     });
 
-    const requiredAttributes = ['templateId'];
     const attributes = ['text', 'html', 'subject'];
-    const missingAttributes = _.difference(requiredAttributes, Object.keys(emailTemplate));
-
-    if (missingAttributes.length > 0) {
-      throw new Error(`Following attributes are missing from your email template : ${missingAttributes.join(', ')}`);
-    }
 
     let bodyHtml, bodyText, subject;
 
     const { templateReferenceId } = emailTemplate || {};
 
-    const queryParams = templateReferenceId ? { templateReferenceId } : { id: emailTemplate.templateId };
+    const queryParams = {where: {template_reference_id: templateReferenceId}};
     const response = await strapi.db.query('plugin::email-designer.email-template').findOne(queryParams);
     ({ bodyHtml, bodyText, subject } = response);
 
